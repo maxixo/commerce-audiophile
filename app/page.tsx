@@ -6,7 +6,7 @@ import { AboutSection } from "@/components/AboutSection";
 
 export default function HomePage() {
 return (
-<div>
+<div className="flex flex-col mx-auto items-center bg-gray-50">
 <HeroSection />
 <CategoryCards />
 <ProductHighlight />
