@@ -13,19 +13,24 @@ const categories = [
 
 export function CategoryCards() {
   return (
-    <section className="flex w-[1100px]  flex-col md:flex-row justify-between gap-6 px-8 py-20 bg-white">
+    <section className="flex w-[1100px] flex-col md:flex-row justify-between gap-6 px-8 py-20 bg-white mx-auto">
       {categories.map((cat) => (
         <div
           key={cat.name}
-          className="flex flex-col items-center bg-gray-100 rounded-lg py-8 w-full md:w-1/4"
+          className="relative flex flex-col items-center bg-gray-100 rounded-lg pt-16 pb-8 w-[350px]"
         >
-          <Image
-            src={cat.image}
-            alt={cat.name}
-            width={120}
-            height={120}
-          />
-          <h3 className="mt-6 text-sm font-bold uppercase">{cat.name}</h3>
+          {/* Image positioned to overlap upward */}
+          <div className="absolute -top-10">
+            <Image
+              src={cat.image}
+              alt={cat.name}
+              width={120}
+              height={120}
+              className="drop-shadow-lg"
+            />
+          </div>
+
+          <h3 className="mt-10 text-sm font-bold uppercase">{cat.name}</h3>
           <Link
             href={cat.link}
             className="text-gray-400 text-xs uppercase mt-2 tracking-wider hover:text-orange-500"

@@ -4,20 +4,32 @@ import Speaker from "./../public/assets/image-speaker-zx9.png";
 
 export function ProductHighlight() {
   return (
-    <section className="px-8  flex w-[1100px] flex-col gap-10">
+    <section className="px-8 flex w-[1100px]   flex-col gap-5 mx-auto">
       
       {/* ZX9 Speaker */}
-      <div className="bg-orange-500 rounded-lg text-white flex flex-col md:flex-row items-center justify-between px-10 py-16">
-        <Image
-          src={Speaker}
-          alt="ZX9 Speaker"
-          width={300}
-          height={300}
-          className="mb-6 md:mb-0"
-        />
-        <div className="max-w-md">
-          <h2 className="text-4xl font-bold mb-4">ZX9 SPEAKER</h2>
-          <p className="mb-8 leading-relaxed">
+      <div className="relative h-[560px] bg-orange-500 rounded-lg text-white flex flex-col md:flex-row items-center justify-between px-10 py-16 overflow-hidden ">
+        {/* Decorative Circles */}
+        <div className="absolute inset-0 flex justify-center items-center">
+          <div className="absolute w-[400px] h-[400px] rounded-full border border-white/25"></div>
+          <div className="absolute w-[600px] h-[600px] rounded-full border border-white/20"></div>
+          <div className="absolute w-[800px] h-[800px] rounded-full border border-white/15"></div>
+        </div>
+
+        {/* Speaker Image */}
+        <div className="relative z-10 flex justify-center md:justify-start w-full md:w-1/2">
+          <Image
+            src={Speaker}
+            alt="ZX9 Speaker"
+            width={410}
+            height={493}
+            className="relative mt-22 ml-10  md:mb-0 drop-shadow-2xl"
+          />
+        </div>
+
+        {/* Text Section */}
+        <div className="relative mr-5 mb-25 z-20 max-w-[350px] text-center md:text-left md:w-1/2">
+          <h2 className="text-5xl font-bold mb-6 tracking-widest">ZX9 SPEAKER</h2>
+          <p className="mb-8 leading-relaxed opacity-90">
             Upgrade to premium speakers that are phenomenally built to deliver truly remarkable sound.
           </p>
           <Link
@@ -32,7 +44,7 @@ export function ProductHighlight() {
       {/* ZX7 Speaker */}
       <div className="relative">
         <Image
-          src="/assets/zx7.png"
+          src="/assets/image-speaker-zx7.jpg"
           alt="ZX7 Speaker"
           width={1110}
           height={560}
@@ -52,7 +64,7 @@ export function ProductHighlight() {
       {/* YX1 Earphones */}
       <div className="grid md:grid-cols-2 gap-6">
         <Image
-          src="/assets/yx1.png"
+          src="/assets/image-earphones-yx1.jpg"
           alt="YX1 Earphones"
           width={540}
           height={320}
