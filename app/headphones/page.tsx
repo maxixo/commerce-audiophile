@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CategoryCards } from '@/components/CategoryCards';
 import { AboutSection } from '@/components/AboutSection';
-import { Footer } from '@/components/Footer';
 
 // ✅ Correct static import
 
@@ -23,7 +22,7 @@ export default function HeadphonesPage() {
             The new XX99 Mark II headphones are the pinnacle of pristine audio. Redefine your premium listening experience with
             high-fidelity sound and exceptional build quality.
           </p>
-          <Link href="/assets/products/xx99-mark-two" className="bg-orange-500 text-white px-6 py-3 uppercase tracking-widest text-sm hover:bg-orange-600">
+          <Link href="/products/xx99-mark-ii" className="bg-orange-500 text-white px-6 py-3 uppercase tracking-widest text-sm hover:bg-orange-600">
             See Product
           </Link>
         </div>
@@ -37,7 +36,7 @@ export default function HeadphonesPage() {
           <p className="text-gray-500 mb-8">
             As the gold standard for headphones, the classic XX99 Mark I offers detailed and accurate audio reproduction for audiophiles.
           </p>
-          <Link href="/products/xx99-mark-one" className="bg-orange-500 text-white px-6 py-3 uppercase tracking-widest text-sm hover:bg-orange-600">
+          <Link href="/products/xx99-mark-i" className="bg-orange-500 text-white px-6 py-3 uppercase tracking-widest text-sm hover:bg-orange-600">
             See Product
           </Link>
         </div>

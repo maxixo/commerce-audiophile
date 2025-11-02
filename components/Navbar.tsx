@@ -2,8 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
+import { useCart } from './cart/CartProvider';
 
 export function Navbar() {
+  const { openCart, count } = useCart();
   return (
     <nav className="relative flex items-center justify-between w-full bg-black text-white py-10 px-8">
       {/* Inner content container (1100px max width) */}
@@ -22,7 +24,14 @@ export function Navbar() {
         </div>
 
         {/* Cart Icon */}
-        <ShoppingCart size={22} />
+        <button onClick={openCart} aria-label="Open cart" className="relative">
+          <ShoppingCart size={22} />
+          {count > 0 && (
+            <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] leading-none px-1.5 py-1 rounded-full">
+              {count}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Centered line (max width 1100px) */}

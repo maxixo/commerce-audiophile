@@ -29,7 +29,7 @@ export function HeroSection() {
             Experience natural, lifelike audio and exceptional build quality made for the passionate music enthusiast.
           </p>
           <Link
-            href="/products/xx99-mark-two"
+            href="/products/xx99-mark-ii"
             className="bg-orange-500 px-6 py-3 text-sm font-semibold uppercase tracking-wider hover:bg-orange-600"
           >
             See Product
