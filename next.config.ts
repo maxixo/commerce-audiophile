@@ -32,7 +32,7 @@ export const env = {
   },
 };
 
-// ✅ Next.js configuration
+// ✅ Next.js configuration with Turbopack
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -40,7 +40,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
       allowedOrigins: ['*'],
     },
-
   },
   env: {
     NEXT_PUBLIC_CONVEX_URL: env.convexUrl,
@@ -50,6 +49,22 @@ const nextConfig: NextConfig = {
     EMAIL_PASS: env.email.pass,
     EMAIL_FROM: env.email.from,
   },
+  distDir: 'build', // Customize the build output directory (can be .next by default)
+
+  // ✅ Turbopack config (empty if you don't need any customization)
+  turbopack: {}, // Add this line to disable the webpack configuration for Turbopack
+
+  // Optional: You can also use `webpack` for customizations if you still need to use it
+  // webpack(config, { isServer }) {
+  //   if (!isServer) {
+  //     config.resolve.fallback = {
+  //       fs: false,
+  //       path: false,
+  //       os: false,
+  //     };
+  //   }
+  //   return config;
+  // },
 };
 
 export default nextConfig;
