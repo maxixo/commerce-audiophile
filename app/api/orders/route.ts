@@ -3,14 +3,13 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
 import nodemailer from "nodemailer";
 
-
 /** ✅ Helper: validate email format */
-function validateEmail(email: string) {
+function validateEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 /** ✅ Main POST handler */
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const body = await req.json();
     console.log("📦 Incoming order body:", body);
@@ -80,6 +79,7 @@ export async function POST(req: Request) {
       { id: convexId, totals: { total, shippingTotal, vat, grandTotal } },
       { status: 201 }
     );
+
   } catch (err) {
     console.error("🔥 Error in /api/orders:", err);
     return NextResponse.json({ error: "Server error while placing order" }, { status: 500 });
