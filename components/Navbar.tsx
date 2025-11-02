@@ -1,7 +1,6 @@
 'use client';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
+import { FaShoppingCart } from 'react-icons/fa'; // ✅ changed icon import
 import { useCart } from './cart/CartProvider';
 
 export function Navbar() {
@@ -9,7 +8,7 @@ export function Navbar() {
   return (
     <nav className="relative flex items-center justify-between w-full bg-black text-white py-10 px-8">
       {/* Inner content container (1100px max width) */}
-      <div className="flex items-center  justify-between w-full max-w-[1100px] mx-auto">
+      <div className="flex items-center justify-between w-full max-w-[1100px] mx-auto">
         {/* Left Section */}
         <div className="flex items-center gap-15">
           <Link href="/" className="text-xl font-bold tracking-wide">
@@ -25,7 +24,7 @@ export function Navbar() {
 
         {/* Cart Icon */}
         <button onClick={openCart} aria-label="Open cart" className="relative">
-          <ShoppingCart size={22} />
+          <FaShoppingCart size={22} /> {/* ✅ replaced lucide icon */}
           {count > 0 && (
             <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] leading-none px-1.5 py-1 rounded-full">
               {count}

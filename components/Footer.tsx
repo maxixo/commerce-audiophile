@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Twitter, Instagram } from 'lucide-react';
+import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa"; // ✅ Correct import path
 
 export function Footer() {
   return (
@@ -25,10 +25,12 @@ export function Footer() {
             Audiophile is an all-in-one stop to fulfill your audio needs. Come and visit our demo
             facility to get the most out of personal audio.
           </p>
+
+          {/* ✅ Corrected Icon Components */}
           <div className="flex gap-5 text-gray-300">
-            <Facebook className="cursor-pointer hover:text-orange-500" />
-            <Twitter className="cursor-pointer hover:text-orange-500" />
-            <Instagram className="cursor-pointer hover:text-orange-500" />
+            <FaFacebook className="w-5 h-5 cursor-pointer hover:text-orange-500" />
+            <FaTwitter className="w-5 h-5 cursor-pointer hover:text-orange-500" />
+            <FaInstagram className="w-5 h-5 cursor-pointer hover:text-orange-500" />
           </div>
         </div>
 

@@ -86,8 +86,9 @@ export default function CheckoutPage() {
       try {
         localStorage.setItem(`order:${id}`, JSON.stringify(order));
       } catch {}
-      setOrderId(id);
-      setShowThanks(true);
+    setOrderId(id);
+    await new Promise((r) => setTimeout(r, 50)); // ensure state flush
+    setShowThanks(true);
     } catch (err) {
       setErrors((e) => ({ ...e, submit: 'Unable to place order. Please try again.' }));
     } finally {
@@ -284,17 +285,25 @@ export default function CheckoutPage() {
               >
                 Back to Home
               </button>
-              {orderId && (
-                <button
-                  className="flex-1 border border-gray-300 text-gray-800 py-3 rounded text-sm uppercase tracking-widest hover:bg-gray-50"
-                  onClick={() => {
-                    clear();
-                    router.push(`/order/${orderId}`);
-                  }}
-                >
-                  View Order
-                </button>
-              )}
+                  {orderId ? (
+      <button
+        className="flex-1 border border-gray-300 text-gray-800 py-3 rounded text-sm uppercase tracking-widest hover:bg-gray-50"
+        onClick={() => {
+          clear();
+          router.push(`/order/${orderId}`);
+        }}
+      >
+        View Order
+      </button>
+    ) : (
+      <button
+        disabled
+        className="flex-1 border border-gray-300 text-gray-400 py-3 rounded text-sm uppercase tracking-widest cursor-not-allowed"
+      >
+        View Order
+      </button>
+    )}
+
             </div>
           </div>
         </div>
