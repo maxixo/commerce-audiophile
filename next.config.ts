@@ -1,10 +1,9 @@
 import type { NextConfig } from 'next';
-import dotenv from 'dotenv';
 
-// ✅ Load environment variables from .env.local
-dotenv.config({ path: '.env.local' });
+// ✅ Next.js automatically loads .env, .env.local, .env.production, etc.
+// So you do NOT need dotenv.config() here.
 
-// ✅ Validate required environment variables
+// ✅ Validate required environment variables (optional but recommended)
 const requiredEnvVars = [
   'NEXT_PUBLIC_CONVEX_URL',
   'EMAIL_HOST',
@@ -20,7 +19,7 @@ for (const key of requiredEnvVars) {
   }
 }
 
-// ✅ Typed runtime environment access
+// ✅ Runtime-accessible env values
 export const env = {
   convexUrl: process.env.NEXT_PUBLIC_CONVEX_URL || '',
   email: {
@@ -32,15 +31,17 @@ export const env = {
   },
 };
 
-// ✅ Next.js configuration with Turbopack
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
       allowedOrigins: ['*'],
     },
   },
+
+  // ✅ Makes env accessible during build
   env: {
     NEXT_PUBLIC_CONVEX_URL: env.convexUrl,
     EMAIL_HOST: env.email.host,
@@ -49,22 +50,10 @@ const nextConfig: NextConfig = {
     EMAIL_PASS: env.email.pass,
     EMAIL_FROM: env.email.from,
   },
-  distDir: 'build', // Customize the build output directory (can be .next by default)
 
-  // ✅ Turbopack config (empty if you don't need any customization)
-  turbopack: {}, // Add this line to disable the webpack configuration for Turbopack
+  distDir: 'build', // optional custom build folder
 
-  // Optional: You can also use `webpack` for customizations if you still need to use it
-  // webpack(config, { isServer }) {
-  //   if (!isServer) {
-  //     config.resolve.fallback = {
-  //       fs: false,
-  //       path: false,
-  //       os: false,
-  //     };
-  //   }
-  //   return config;
-  // },
+  // ❌ Remove invalid 'turbopack' config — this is what caused your error
 };
 
 export default nextConfig;
