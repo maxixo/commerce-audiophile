@@ -20,7 +20,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/dotenv": "^6.1.1",
-    "@types/node": "^20",
+    "@types/node": "^20.19.24",
     "@types/nodemailer": "^7.0.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
