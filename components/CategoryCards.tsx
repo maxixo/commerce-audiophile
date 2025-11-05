@@ -1,41 +1,68 @@
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 import Headphone from "./../public/assets/image-category-thumbnail-headphones.png";
 import Speaker from "./../public/assets/image-category-thumbnail-speakers.png";
 import Earphones from "./../public/assets/image-category-thumbnail-earphones.png";
 
 const categories = [
-  { name: 'Headphones', image: Headphone, link: '/headphones' },
-  { name: 'Speakers', image: Speaker, link: '/speakers' },
-  { name: 'Earphones', image: Earphones, link: '/earphones' },
+  { name: "Headphones", image: Headphone, link: "/headphones" },
+  { name: "Speakers", image: Speaker, link: "/speakers" },
+  { name: "Earphones", image: Earphones, link: "/earphones" },
 ];
 
 export function CategoryCards() {
   return (
-    <section className="flex w-[1100px] flex-col md:flex-row justify-between gap-6 px-8 py-20 bg-white mx-auto">
+    <section
+      className="
+        flex flex-col md:flex-row
+        justify-center md:justify-between
+        items-center md:items-end
+        w-full max-w-[1100px] mx-auto
+        px-4 py-16 gap-6
+      "
+    >
       {categories.map((cat) => (
         <div
           key={cat.name}
-          className="relative flex flex-col items-center bg-gray-100 rounded-lg pt-16 pb-8 w-[350px]"
+          className="
+            relative flex flex-col items-center justify-end
+            bg-gray-100 rounded-lg
+            w-full md:w-[32%] lg:w-[340px]
+            h-[200px] sm:h-[190px] md:h-[204px]
+            pt-16 pb-8
+            transition-all duration-300
+            hover:shadow-lg hover:scale-[1.02]
+          "
         >
-          {/* Image positioned to overlap upward */}
+          {/* Floating image */}
           <div className="absolute -top-10">
             <Image
               src={cat.image}
               alt={cat.name}
               width={120}
-              height={120}
-              className="drop-shadow-lg"
+              height={150}
+              className="drop-shadow-lg object-contain"
             />
           </div>
 
-          <h3 className="mt-10 text-sm font-bold uppercase">{cat.name}</h3>
+          {/* Category name */}
+          <h3 className="mt-10 text-sm md:text-base text-center text-black font-bold uppercase tracking-wider">
+            {cat.name}
+          </h3>
+
+          {/* Shop link */}
           <Link
             href={cat.link}
-            className="text-gray-400 text-xs uppercase mt-2 tracking-wider hover:text-orange-500"
+            className="
+              flex items-center justify-center
+              text-gray-500 text-xs md:text-sm uppercase mt-2
+              tracking-wide hover:text-orange-500 transition-colors
+            "
           >
-            Shop →
+            Shop
+            <MdKeyboardArrowRight className="ml-1 text-lg" />
           </Link>
         </div>
       ))}

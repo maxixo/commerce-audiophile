@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #F2F2F2;
   --foreground: #171717;
+}
+#__next-build-watcher,
+nextjs-portal,
+nextjs-portal div[role="alert"],
+nextjs-portal *[data-nextjs-error-overlay] {
+  display: none !important;
 }
 
 @theme inline {

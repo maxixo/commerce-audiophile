@@ -14,7 +14,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     const body = await req.json();
     console.log("📦 Incoming order body:", body);
 
-    const { customer, shipping, payment, items, totals } = body || {};
+    const { customer, shipping, payment, items } = body || {};
 
     // ---------- Basic Validation ----------
     if (!customer || !shipping || !Array.isArray(items) || items.length === 0) {
@@ -28,7 +28,13 @@ export async function POST(req: Request): Promise<NextResponse> {
     }
 
     for (const it of items) {
-      if (!it.slug || !it.name || typeof it.price !== "number" || typeof it.qty !== "number" || it.qty < 1) {
+      if (
+        !it.slug ||
+        !it.name ||
+        typeof it.price !== "number" ||
+        typeof it.qty !== "number" ||
+        it.qty < 1
+      ) {
         console.error("❌ Invalid cart item:", it);
         return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
       }
@@ -61,6 +67,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     }
 
     // ---------- Send Confirmation Email ----------
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(req.url).origin;
     try {
       await sendOrderEmail({
         to: customer.email,
@@ -68,6 +75,8 @@ export async function POST(req: Request): Promise<NextResponse> {
         items,
         totals: { total, shippingTotal, vat, grandTotal },
         id: convexId,
+        shipping,
+        baseUrl,
       });
     } catch (err) {
       console.warn("⚠️ Failed to send confirmation email:", err);
@@ -79,10 +88,12 @@ export async function POST(req: Request): Promise<NextResponse> {
       { id: convexId, totals: { total, shippingTotal, vat, grandTotal } },
       { status: 201 }
     );
-
   } catch (err) {
     console.error("🔥 Error in /api/orders:", err);
-    return NextResponse.json({ error: "Server error while placing order" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server error while placing order" },
+      { status: 500 }
+    );
   }
 }
 
@@ -111,12 +122,16 @@ async function sendOrderEmail({
   items,
   totals,
   id,
+  shipping,
+  baseUrl,
 }: {
   to: string;
   name: string;
   items: any[];
   totals: any;
   id: string;
+  shipping?: { address: string; zip: string; city: string; country: string };
+  baseUrl: string;
 }) {
   const host = process.env.EMAIL_HOST;
   const port = Number(process.env.EMAIL_PORT || 465);
@@ -136,32 +151,99 @@ async function sendOrderEmail({
     auth: { user, pass },
   });
 
+  const currency = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
+  const rows = items
+    .map(
+      (i) => `
+      <tr>
+        <td style="padding:8px 0; color:#111111;">${i.name}</td>
+        <td style="padding:8px 0; text-align:right; color:#555;">x${i.qty}</td>
+        <td style="padding:8px 0; text-align:right; color:#111111;">${currency.format(
+          i.price * i.qty
+        )}</td>
+      </tr>`
+    )
+    .join("");
+
+  const shipBlock = shipping
+    ? `
+      <p style="margin:0; color:#111111; font-weight:600;">Shipping to</p>
+      <p style="margin:4px 0 0; color:#555;">${shipping.address}</p>
+      <p style="margin:0; color:#555;">${shipping.city}, ${shipping.zip}</p>
+      <p style="margin:0; color:#555;">${shipping.country}</p>
+    `
+    : "";
+
+  const orderLink = `${baseUrl}/order/${id}`;
+
   const html = `
-    <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.4">
-      <h2>Thank you for your order, ${name}!</h2>
-      <p>Order ID: <strong>${id}</strong></p>
-      <table style="width:100%;border-collapse:collapse">
-        <thead><tr><th align="left">Item</th><th align="right">Qty</th><th align="right">Price</th></tr></thead>
-        <tbody>
-          ${items
-            .map(
-              (i) => `<tr>
-                <td>${i.name}</td>
-                <td align="right">${i.qty}</td>
-                <td align="right">$${(i.price * i.qty).toLocaleString()}</td>
-              </tr>`
-            )
-            .join("")}
-        </tbody>
-      </table>
-      <p style="margin-top:16px">
-        Subtotal: $${totals.total.toLocaleString()}<br/>
-        Shipping: $${totals.shippingTotal.toLocaleString()}<br/>
-        VAT (included): $${totals.vat.toLocaleString()}<br/>
-        <strong>Grand Total: $${totals.grandTotal.toLocaleString()}</strong>
-      </p>
-    </div>
-  `;
+  <!doctype html>
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Order Confirmation</title>
+      <style>
+        body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f6f6;color:#111}
+        .container{max-width:600px;margin:0 auto;padding:24px}
+        .card{background:#ffffff;border-radius:8px;padding:24px}
+        .header{display:flex;align-items:center;gap:12px}
+        .badge{width:40px;height:40px;border-radius:9999px;background:#d87d4a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .title{font-size:20px;line-height:28px;font-weight:700;margin:8px 0 0}
+        .muted{color:#666}
+        .totals td{padding:6px 0}
+        .cta{display:inline-block;background:#d87d4a;color:#fff;text-decoration:none;padding:12px 16px;border-radius:6px;font-size:14px;font-weight:600}
+        @media(max-width:640px){.container{padding:12px}.card{padding:16px}}
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="card">
+          <div class="header">
+            <div class="badge">✓</div>
+            <div>
+              <div class="muted" style="text-transform:uppercase;letter-spacing:.1em;font-size:12px;">Thank you, ${name}</div>
+              <h1 class="title">Your order is confirmed</h1>
+            </div>
+          </div>
+          <p class="muted" style="margin-top:12px">Order ID: <strong style="color:#111">${id}</strong></p>
+
+          <h3 style="margin:20px 0 8px;font-size:16px">Order Summary</h3>
+          <table style="width:100%;border-collapse:collapse">${rows}</table>
+
+          <table class="totals" style="width:100%;margin-top:12px">
+            <tr><td class="muted">Subtotal</td><td style="text-align:right">${currency.format(
+              totals.total
+            )}</td></tr>
+            <tr><td class="muted">Shipping</td><td style="text-align:right">${currency.format(
+              totals.shippingTotal
+            )}</td></tr>
+            <tr><td class="muted">VAT (included)</td><td style="text-align:right">${currency.format(
+              totals.vat
+            )}</td></tr>
+            <tr><td style="font-weight:700">Grand Total</td><td style="text-align:right;font-weight:700">${currency.format(
+              totals.grandTotal
+            )}</td></tr>
+          </table>
+
+          ${shipBlock ? `<div style="margin-top:16px">${shipBlock}</div>` : ""}
+
+          <div style="margin-top:20px">
+            <a class="cta" href="${orderLink}" target="_blank" rel="noopener">View your order</a>
+          </div>
+
+          <div style="margin-top:20px">
+            <p class="muted" style="margin:0">Need help? Contact our support:</p>
+            <p style="margin:4px 0 0"><a href="mailto:support@audiophile.dev">support@audiophile.dev</a> • <a href="${baseUrl}">${baseUrl}</a></p>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>`;
 
   const mailOptions = {
     from,

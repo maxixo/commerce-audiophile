@@ -26,7 +26,7 @@ export function Navbar() {
         <button onClick={openCart} aria-label="Open cart" className="relative">
           <FaShoppingCart size={22} /> {/* ✅ replaced lucide icon */}
           {count > 0 && (
-            <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] leading-none px-1.5 py-1 rounded-full">
+            <span className="absolute -top-2 -right-2  bg-[#DB7D4A] text-white text-[10px] leading-none px-1.5 py-1 rounded-full">
               {count}
             </span>
           )}
@@ -34,7 +34,7 @@ export function Navbar() {
       </div>
 
       {/* Centered line (max width 1100px) */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-full max-w-[1100px] h-[1px] bg-white/20"></div>
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-full max-w-[1100px] h-px bg-white/20"></div>
     </nav>
   );
 }
