@@ -38,3 +38,5 @@ export function Navbar() {
     </nav>
   );
 }
+
+console.log("Convex URL:", process.env.NEXT_PUBLIC_CONVEX_URL);
