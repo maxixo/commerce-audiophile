@@ -121,6 +121,7 @@ async function tryStoreInConvex(doc: any): Promise<string | null> {
 /** ✅ Send confirmation email via Nodemailer */
 /** ✅ Send confirmation email via Nodemailer */
 /** ✅ Send confirmation email via Nodemailer (order: transporter → rows → orderLink → html → send) */
+
 async function sendOrderEmail({
   to,
   name,
@@ -145,36 +146,35 @@ async function sendOrderEmail({
   const from = process.env.MAIL_FROM || user;
 
   if (!host || !user || !pass) {
-    console.warn("⚠️ Missing SMTP config. Email not sent.", { host, userSet: !!user, passSet: !!pass });
+    console.warn("MAIL_DEBUG missing envs", { host: !!host, user: !!user, pass: !!pass, from });
     return;
   }
 
   const transporter = nodemailer.createTransport({
     host,
     port,
-    secure: port === 465, // 465=SSL, 587=STARTTLS
+    secure: port === 465, // 465 (SSL) vs 587 (STARTTLS)
     auth: { user, pass },
+    // logger: true, // uncomment for very verbose SMTP logs
+    // debug: true,
   });
 
-  // ---- Build data BEFORE using it ----
+  // Build data first
   const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
-
   const rows = items
     .map(
       (i) => `
-        <tr>
-          <td style="padding:10px 0; color:#111111;">${i.name}</td>
-          <td style="padding:10px 0; text-align:right; color:#555;">x${i.qty}</td>
-          <td style="padding:10px 0; text-align:right; color:#111111;">
-            ${currency.format(i.price * i.qty)}
-          </td>
-        </tr>`
+      <tr>
+        <td style="padding:10px 0; color:#111111;">${i.name}</td>
+        <td style="padding:10px 0; text-align:right; color:#555;">x${i.qty}</td>
+        <td style="padding:10px 0; text-align:right; color:#111111;">
+          ${currency.format(i.price * i.qty)}
+        </td>
+      </tr>`
     )
     .join("");
-
   const orderLink = `${baseUrl}/order/${id}`;
 
-  // ---- Define HTML BEFORE sendMail ----
   const html = `
   <!doctype html>
   <html>
@@ -233,13 +233,34 @@ async function sendOrderEmail({
     </body>
   </html>`;
 
-  // ---- Send AFTER html exists ----
+  // Verify & send with explicit logging
   try {
+    console.log("MAIL_DEBUG verify", { host, port, from, userMasked: user?.replace(/.(?=.{3})/g, "*") });
     await transporter.verify();
-    const info = await transporter.sendMail({ from, to, subject: "Your Order Confirmation", html });
-    console.log("✅ Email sent", info.messageId);
-  } catch (err) {
-    console.error("❌ Email send failed", err);
+    console.log("MAIL_DEBUG verified OK");
+
+    const info = await transporter.sendMail({
+      from,
+      to,
+      subject: "Your Order Confirmation",
+      html,
+    });
+
+    console.log("MAIL_DEBUG result", {
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      pending: (info as any).pending, // some providers include this
+      response: info.response,
+    });
+  } catch (err: any) {
+    console.error("MAIL_DEBUG error", {
+      name: err?.name,
+      code: err?.code,
+      command: err?.command,
+      response: err?.response,
+      message: err?.message,
+    });
     throw err;
   }
 }
