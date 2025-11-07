@@ -1,8 +1,5 @@
 import type { NextConfig } from 'next';
 
-// ✅ Next.js automatically loads .env, .env.local, .env.production, etc.
-// So you do NOT need dotenv.config() here.
-
 // ✅ Validate required environment variables (optional but recommended)
 const requiredEnvVars = [
   'NEXT_PUBLIC_CONVEX_URL',
@@ -35,6 +32,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   experimental: {
+    // ✅ Removed reactCompiler (causing type error)
     serverActions: {
       bodySizeLimit: '2mb',
       allowedOrigins: ['*'],
@@ -51,9 +49,7 @@ const nextConfig: NextConfig = {
     EMAIL_FROM: env.email.from,
   },
 
-  distDir: 'build', // optional custom build folder
-
-  // ❌ Remove invalid 'turbopack' config — this is what caused your error
+  // ✅ Removed distDir to avoid wrong deploy path issues
 };
 
 export default nextConfig;
