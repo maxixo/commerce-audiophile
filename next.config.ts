@@ -1,13 +1,13 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
-// ✅ Validate required environment variables (optional but recommended)
+// ✅ Validate required environment variables (recommended for production safety)
 const requiredEnvVars = [
-  'NEXT_PUBLIC_CONVEX_URL',
-  'EMAIL_HOST',
-  'EMAIL_PORT',
-  'EMAIL_USER',
-  'EMAIL_PASS',
-  'EMAIL_FROM',
+  "NEXT_PUBLIC_CONVEX_URL",
+  "SMTP_HOST",
+  "SMTP_PORT",
+  "SMTP_USER",
+  "SMTP_PASS",
+  "MAIL_FROM",
 ];
 
 for (const key of requiredEnvVars) {
@@ -16,15 +16,15 @@ for (const key of requiredEnvVars) {
   }
 }
 
-// ✅ Runtime-accessible env values
+// ✅ Centralized env object used internally
 export const env = {
-  convexUrl: process.env.NEXT_PUBLIC_CONVEX_URL || '',
-  email: {
-    host: process.env.EMAIL_HOST || '',
-    port: Number(process.env.EMAIL_PORT || 465),
-    user: process.env.EMAIL_USER || '',
-    pass: process.env.EMAIL_PASS || '',
-    from: process.env.EMAIL_FROM || '',
+  convexUrl: process.env.NEXT_PUBLIC_CONVEX_URL || "",
+  smtp: {
+    host: process.env.SMTP_HOST || "",
+    port: Number(process.env.SMTP_PORT || 587),
+    user: process.env.SMTP_USER || "",
+    pass: process.env.SMTP_PASS || "",
+    from: process.env.MAIL_FROM || "",
   },
 };
 
@@ -32,24 +32,21 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   experimental: {
-    // ✅ Removed reactCompiler (causing type error)
     serverActions: {
-      bodySizeLimit: '2mb',
-      allowedOrigins: ['*'],
+      bodySizeLimit: "2mb",
+      allowedOrigins: ["*"],
     },
   },
 
-  // ✅ Makes env accessible during build
+  // ✅ Makes vars available during build/runtime on Next.js server components
   env: {
     NEXT_PUBLIC_CONVEX_URL: env.convexUrl,
-    EMAIL_HOST: env.email.host,
-    EMAIL_PORT: env.email.port.toString(),
-    EMAIL_USER: env.email.user,
-    EMAIL_PASS: env.email.pass,
-    EMAIL_FROM: env.email.from,
+    SMTP_HOST: env.smtp.host,
+    SMTP_PORT: env.smtp.port.toString(),
+    SMTP_USER: env.smtp.user,
+    SMTP_PASS: env.smtp.pass,
+    MAIL_FROM: env.smtp.from,
   },
-
-  // ✅ Removed distDir to avoid wrong deploy path issues
 };
 
 export default nextConfig;
