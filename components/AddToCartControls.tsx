@@ -15,6 +15,7 @@ function derivePreview(imagePath: string, slug: string) {
   return imagePath; // fallback to given image
 }
 
+
 export default function AddToCartControls({
   slug,
   name,
